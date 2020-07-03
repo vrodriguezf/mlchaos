@@ -1,4 +1,4 @@
-# nbdev template
+# MLchaos
 
-Use this template to more easily create your nbdev project.
+Studying the use of machine learning techniques to characterize chaotic motions
 

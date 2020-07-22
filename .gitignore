@@ -1,3 +1,11 @@
+#Victor - jupyterlab
+.npm
+.jupyter
+.ipython
+.local
+.config
+.bash_history
+
 *.bak
 .gitattributes
 .last_checked

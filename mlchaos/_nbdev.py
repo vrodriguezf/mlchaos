@@ -2,11 +2,13 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"TensorTSMotion": "core.ipynb",
-         "ToTensorTSMotion": "core.ipynb",
-         "StandardizeNoDecode": "core.ipynb",
-         "StandardizeGlobal": "core.ipynb",
+index = {"StandardizeGlobal": "core.ipynb",
          "StandardizeItem": "core.ipynb",
+         "StandardizeNoDecode": "core.ipynb",
+         "TensorMotion": "core.ipynb",
+         "ToTensorMotion": "core.ipynb",
+         "TensorTSMotion": "core.ipynb",
+         "ToTensorTSMotion": "core.ipynb",
          "prettify_plot_TensorTSMotion": "core.ipynb",
          "load_poincare_maps": "data.ipynb",
          "load_index_file": "data.ipynb",

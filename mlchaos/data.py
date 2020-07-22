@@ -54,7 +54,7 @@ class TSDataChaos(TSData):
                 xs.append(x)
                 ys.append(y)
                 self.fnames.append((fn_poincare, fn_index))
-                data.dsname.append((fn_poincare.stem, fn_index.stem))
+                self.dsname.append(fn_poincare.parent.stem)
             self.x = np.concatenate(xs)
             self.y = np.concatenate(ys)
         else:

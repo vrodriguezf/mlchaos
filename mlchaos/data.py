@@ -103,4 +103,4 @@ def show_fli_plot(poinc_maps:np.ndarray=None,
     initial_conditions = poinc_maps[:,:,0]
     qux = pd.DataFrame(initial_conditions, columns=['x0', 'y0'])
     qux['class'] = lbls
-    sns.scatterplot(data=qux, x='x0', y='y0', hue='class', marker='.', **kwargs)
+    return sns.scatterplot(data=qux, x='x0', y='y0', hue='class', marker='.', **kwargs)

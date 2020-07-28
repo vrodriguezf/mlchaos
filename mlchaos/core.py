@@ -97,7 +97,7 @@ class TensorMotion(TensorTS):
 class ToTensorMotion(ItemTransform):
     # "x : 2D numpy array"
     def encodes(self, x): return TensorMotion(x)
-    def decodes(self, x): return x.numpy()
+    #def decodes(self, x): return x.numpy()
 
 # Cell
 @typedispatch

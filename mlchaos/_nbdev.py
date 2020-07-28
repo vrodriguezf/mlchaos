@@ -14,6 +14,7 @@ index = {"StandardizeGlobal": "core.ipynb",
          "load_index_file": "data.ipynb",
          "load_poincare_index_pair": "data.ipynb",
          "TSDataChaos": "data.ipynb",
+         "show_fli_plot": "data.ipynb",
          "df_slicer": "utils.ipynb"}
 
 modules = ["core.py",

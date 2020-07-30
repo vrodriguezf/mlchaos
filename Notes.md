@@ -8,3 +8,7 @@ I don't know what ype of normalization I should apply. In terms of the data, doe
 The problem is that, if I try any item-based normalization, I ge NaNs in the validation loss.
 
 ACTION: try to normalize directly in the TSData object, without any ItemTransform.
+
+-------------
+
+28/07/2020: The trianing results in the third dataset are slightly worse thanin the second one.

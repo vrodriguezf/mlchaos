@@ -66,7 +66,9 @@ class TensorMotion(TensorTS):
         "Display poincare map for a motion"
         if ctx is None: fig, ctx = plt.subplots()
         t = range(self.shape[1])
-        ctx.scatter(self[0], self[1])
+        ctx.scatter(self[0][1:], self[1][1:])
+        # The initial conditions (x0, y0) are plotted in a different colour
+        ctx.scatter(self[0][0], self[1][0])
         ctx.set(xlim=[0, 360])
         if ylim: ctx.set(ylim=ylim)
         if title: ctx.set_title(title)

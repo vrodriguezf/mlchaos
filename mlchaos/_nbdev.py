@@ -15,7 +15,8 @@ index = {"StandardizeGlobal": "core.ipynb",
          "load_poincare_index_pair": "data.ipynb",
          "TSDataChaos": "data.ipynb",
          "show_fli_plot": "data.ipynb",
-         "df_slicer": "utils.ipynb"}
+         "df_slicer": "utils.ipynb",
+         "ClassificationInterpretationAugmented": "utils.ipynb"}
 
 modules = ["core.py",
            "data.py",

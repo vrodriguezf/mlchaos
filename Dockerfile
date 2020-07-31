@@ -1,8 +1,11 @@
 FROM vrodriguezf/jupyterlab-cuda
 
 # Python packages
-RUN pip install nbdev fastai2 fastinference seaborn
+# Git
+RUN pip install git+https://github.com/fastai/fastai2.git
 RUN pip install git+https://github.com/ai-fast-track/timeseries.git
+# PyPi
+RUN pip install nbdev fastinference seaborn papermill
 
 # Add non-root user (call this with the specific UID and GIO of the host, to share permissions)
 ARG USER_ID=1000

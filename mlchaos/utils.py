@@ -34,8 +34,8 @@ class ClassificationInterpretationAugmented(ClassificationInterpretation):
             return self.losses.topk(ifnone(k, len(self.losses)), largest=largest)
         else:
             # Subset losses by the conditions given in predicted and actual arguments
-            cond_preds = (self.decoded == self.vocab.o2i[predicted]) if predicted else True
-            cond_actuals = (self.targs == self.vocab.o2i[actual]) if actual else True
+            cond_preds = (self.decoded == self.vocab.o2i[predicted]) if predicted else tensor(True)
+            cond_actuals = (self.targs == self.vocab.o2i[actual]) if actual else tensor(True)
             idxs = (cond_preds & cond_actuals).nonzero().squeeze()
             loss_subset = self.losses[idxs].topk(ifnone(k, len(idxs)), largest=largest)
             # The indices in loss_subset are relative to the object `idxs`. We have to

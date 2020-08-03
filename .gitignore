@@ -5,6 +5,8 @@
 .local
 .config
 .bash_history
+wandb
+nbs/--.ipynb
 
 *.bak
 .gitattributes

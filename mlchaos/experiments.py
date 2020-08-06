@@ -13,8 +13,8 @@ from fastcore.utils import Path
 def x_sequence_length(min_rp:Param("Minimum resampling period", int)=1,
                       max_rp:Param("Maximum resampling period", int)=10,
                       rep_times:Param("Number of times ru run per rp", int)=10,
-                      nbs_folder:Param("Notebook folder of the project", str)='.'):
-    for x in range(min_rp, max_rp):
+                      nbs_folder:Param("Notebook folder path", str)='.'):
+    for x in range(min_rp, max_rp+1):
         for _ in range(rep_times):
             pm.execute_notebook(input_path=f'{Path(nbs_folder)}/_motion_classification_time_series.ipynb',
                                 output_path='--',

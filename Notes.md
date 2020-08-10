@@ -11,4 +11,13 @@ ACTION: try to normalize directly in the TSData object, without any ItemTransfor
 
 -------------
 
-28/07/2020: The trianing results in the third dataset are slightly worse thanin the second one.
+28/07/2020: The training results in the third dataset are slightly worse than in the second one.
+
+09/08/2020: 
+
+* `plot_top_losses` is not compatible with a Normalization by_sample, because in a `by_sample` normalization, you need a call to `encodes` right before the `decodes` to make it work. Otherwise you don't have the information from the original samples. In the batch plotted in `plot_top_losses`, samples are not encoded as in `show_batch` and `show_results`. Instead, they are just taken from the attribute `interp.inputs`, which in turn, comes from a call to `learn.get_preds(with_input=True)`, which returns the inputs transformed.
+
+* oguiza's does not seem compatible with the inclusion of a vocab in the dataset. One good way to combine the two repos is to adapt the transforms of oguiza (class TSTensor) to the TensorTS from ai-fast-track
+
+* oguiza's `show_batch` works five times faster than `ai-fast-track`. The bottleneck must be in the creation of the `Datasets` object. oguiza's datasets take 5 seconds to be created, while 
+ai-fast-track takes 100 milliseconds.

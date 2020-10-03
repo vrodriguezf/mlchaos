@@ -22,26 +22,29 @@ def load_poincare_maps(fname):
     return nparr.transpose([0, 2, 1])
 
 # Cell
-def load_index_file(fname):
+def load_index_file(fname, index_col=7):
+    "Returns the index of an index file"
     return pd.read_table(fname,
                          sep='\s+',
                          header=None,
-                         usecols=[7],
+                         usecols=[index_col],
                          squeeze=True).values
 
 # Cell
-def load_poincare_index_pair(fname_poincare, fname_index):
+@delegates(to=load_index_file, but=['fname'])
+def load_poincare_index_pair(fname_poincare, fname_index, **kwargs):
     "Load the x data from a Poincare file and the y data from the index file.\
     Returns a tuple of 2 numpy arrays: "
     "x : array with a shape (n_samples, n_channels, sequence_length)"
     "y : array with a shape (n_samples)"
     "for the Poincare maps, n_channels is 2 (x and y)"
-    return load_poincare_maps(fname_poincare), load_index_file(fname_index)
+    return load_poincare_maps(fname_poincare), load_index_file(fname_index, **kwargs)
 
 # Cell
 class TSDataChaos(TSData):
     @classmethod
-    def from_poincare_and_index_files(cls, fnames):
+    @delegates(to=load_poincare_index_pair)
+    def from_poincare_and_index_files(cls, fnames, **kwargs):
         "`fnames` is a list of pairs (poincare_file, index_file), or a single pair."
         self = cls(fnames)
         self.x = []
@@ -51,18 +54,18 @@ class TSDataChaos(TSData):
         xs,ys = [],[]
         if isinstance(fnames, list):
             for fn_poincare, fn_index in fnames:
-                x, y = load_poincare_index_pair(fn_poincare, fn_index)
+                x, y = load_poincare_index_pair(fn_poincare, fn_index, **kwargs)
                 xs.append(x)
                 ys.append(y)
                 self.fnames.append((fn_poincare, fn_index))
-                self.dsname.append(fn_poincare.parent.stem)
+                self.dsname.append(fn_poincare.parent.name)
             self.x = np.concatenate(xs)
             self.y = np.concatenate(ys)
         else:
             fn_poincare, fn_index = fnames
             self.fnames.append(fnames)
-            self.dsname.append(fn_poincare.parent.stem)
-            self.x, self.y = load_poincare_index_pair(fn_poincare, fn_index)
+            self.dsname.append(fn_poincare.parent.name)
+            self.x, self.y = load_poincare_index_pair(fn_poincare, fn_index, **kwargs)
         return self
 
     @classmethod
@@ -79,12 +82,12 @@ class TSDataChaos(TSData):
                 x = load_poincare_maps(fn_poincare)
                 xs.append(x)
                 self.fnames.append((fn_poincare, fn_index))
-                self.dsname.append(fn_poincare.parent.stem)
+                self.dsname.append(fn_poincare.parent.name)
             self.x = np.concatenate(xs)
         else:
             fn_poincare = fnames
             self.fnames.append(fn_poincare)
-            self.dsname.append(fn_poincare.parent.stem)
+            self.dsname.append(fn_poincare.parent.name)
             self.x = load_poincare_maps(fn_poincare)
         return self
 

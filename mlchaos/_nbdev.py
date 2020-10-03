@@ -2,7 +2,8 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"StandardizeGlobal": "core.ipynb",
+index = {"show_cam_motion": "cam.ipynb",
+         "StandardizeGlobal": "core.ipynb",
          "StandardizeItem": "core.ipynb",
          "StandardizeNoDecode": "core.ipynb",
          "TensorMotion": "core.ipynb",
@@ -19,7 +20,8 @@ index = {"StandardizeGlobal": "core.ipynb",
          "df_slicer": "utils.ipynb",
          "ClassificationInterpretationAugmented": "utils.ipynb"}
 
-modules = ["core.py",
+modules = ["cam.py",
+           "core.py",
            "data.py",
            "experiments.py",
            "utils.py"]

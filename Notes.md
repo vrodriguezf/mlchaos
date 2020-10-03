@@ -21,3 +21,9 @@ ACTION: try to normalize directly in the TSData object, without any ItemTransfor
 
 * oguiza's `show_batch` works five times faster than `ai-fast-track`. The bottleneck must be in the creation of the `Datasets` object. oguiza's datasets take 5 seconds to be created, while 
 ai-fast-track takes 100 milliseconds.
+
+15/09/2020
+
+cam.py: 498:             plt.scatter(t, tseries, cmap=cmap, c = acts)
+
+Replace tseries by tseries[ch], where ch is the channel of interest

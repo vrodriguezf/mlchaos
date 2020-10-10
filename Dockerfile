@@ -13,7 +13,8 @@ RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID $USER
 ###
 
 # PyPi
-RUN pip install nbdev fastai2 seaborn papermill wandb
+RUN pip install nbdev fastai seaborn papermill
+RUn pip install --upgrade wandb
 
 # Git
 #RUN pip install git+https://github.com/fastai/fastai2.git

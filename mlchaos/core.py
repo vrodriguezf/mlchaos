@@ -5,8 +5,8 @@ __all__ = ['StandardizeGlobal', 'StandardizeItem', 'StandardizeNoDecode', 'Tenso
 
 # Cell
 from timeseries.all import *
-from fastai2.basics import *
-from fastai2.vision.data import get_grid
+from fastai.basics import *
+from fastai.vision.data import get_grid
 import numpy as np
 
 # Cell

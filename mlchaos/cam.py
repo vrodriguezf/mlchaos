@@ -4,8 +4,8 @@ __all__ = ['show_cam_motion']
 
 # Cell
 from timeseries.all import *
-from fastai2.imports import *
-from fastai2.basics import *
+from fastai.imports import *
+from fastai.basics import *
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 import matplotlib.cm as cm

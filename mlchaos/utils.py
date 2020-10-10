@@ -5,8 +5,8 @@ __all__ = ['df_slicer', 'ClassificationInterpretationAugmented']
 # Cell
 import numpy as np
 from fastcore.all import *
-from fastai2.interpret import *
-from fastai2.data.all import *
+from fastai.interpret import *
+from fastai.data.all import *
 
 # Cell
 def df_slicer(df, w, s=1, padding=False, padding_value=0, return_as='ndarray'):

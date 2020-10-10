@@ -17,7 +17,7 @@ index = {"show_cam_motion": "cam.ipynb",
          "load_poincare_index_pair": "data.ipynb",
          "TSDataChaos": "data.ipynb",
          "get_motion_items": "data.ipynb",
-         "show_fli_plot": "data.ipynb",
+         "show_labelled_ic_map": "data.ipynb",
          "x_sequence_length": "experiments.ipynb",
          "df_slicer": "utils.ipynb",
          "ClassificationInterpretationAugmented": "utils.ipynb"}

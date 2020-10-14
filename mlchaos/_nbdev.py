@@ -19,6 +19,8 @@ index = {"show_cam_motion": "cam.ipynb",
          "get_motion_items": "data.ipynb",
          "show_labelled_ic_map": "data.ipynb",
          "x_sequence_length": "experiments.ipynb",
+         "x_next_epsilon": "experiments.ipynb",
+         "x_labelling_method": "experiments.ipynb",
          "df_slicer": "utils.ipynb",
          "ClassificationInterpretationAugmented": "utils.ipynb"}
 

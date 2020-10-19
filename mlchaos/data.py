@@ -23,13 +23,18 @@ def load_poincare_maps(fname):
     return nparr.transpose([0, 2, 1])
 
 # Cell
-def load_index_file(fname, index_col=7):
-    "Returns the index of an index file"
-    return pd.read_table(fname,
+def load_index_file(fname, index_col=7, uncertainty_index=-1.):
+    "Returns the index of an index file. In case the argument `index_col` has more \
+    than one value, the value in `uncertainty_index` will be set."
+    indices = pd.read_table(fname,
                          sep='\s+',
                          header=None,
-                         usecols=[index_col],
+                         usecols=L(index_col),
                          squeeze=True).values
+    # indices is a numpy array
+    if len(indices.shape) > 1:
+        indices = array([x[0] if np.all(x == x[0]) else uncertainty_index for x in indices])
+    return indices
 
 # Cell
 @delegates(to=load_index_file, but=['fname'])

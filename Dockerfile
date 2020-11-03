@@ -13,7 +13,7 @@ RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID $USER
 ###
 
 # PyPi
-RUN pip install --upgrade nbdev fastai seaborn papermill
+RUN pip install --upgrade nbdev fastai seaborn papermill plotly
 RUn pip install --upgrade wandb
 
 # Git

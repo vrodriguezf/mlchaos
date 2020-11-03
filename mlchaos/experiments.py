@@ -28,21 +28,23 @@ def x_sequence_length(min_rp:Param("Minimum resampling period", int)=1,
 def x_next_epsilon(nbs_folder:Param("Notebook folder path", str)='.'):
     base_path = Path.home()
     ds_path = base_path/'data/fli_rotnum/model_1'
-    fnames = [
-        (ds_path/'eps=0.021/Poincare.plt', ds_path/'eps=0.021/index_fli_freqana.plt'),
-        (ds_path/'eps=0.022/Poincare.plt', ds_path/'eps=0.022/index_fli_freqana.plt'),
-        (ds_path/'eps=0.023/Poincare.plt', ds_path/'eps=0.023/index_fli_freqana.plt'),
-        (ds_path/'eps=0.024/Poincare.plt', ds_path/'eps=0.024/index_fli_freqana.plt'),
-        (ds_path/'eps=0.025/Poincare.plt', ds_path/'eps=0.025/index_fli_freqana.plt'),
-    ]
+    fnames = L(
+        (ds_path/'eps=0.021/Poincare.plt', ds_path/'eps=0.021/index_fli_rotnum_birav.plt'),
+        (ds_path/'eps=0.022/Poincare.plt', ds_path/'eps=0.022/index_fli_rotnum_birav.plt'),
+        (ds_path/'eps=0.023/Poincare.plt', ds_path/'eps=0.023/index_fli_rotnum_birav.plt'),
+        (ds_path/'eps=0.024/Poincare.plt', ds_path/'eps=0.024/index_fli_rotnum_birav.plt'),
+        (ds_path/'eps=0.025/Poincare.plt', ds_path/'eps=0.025/index_fli_rotnum_birav.plt'),
+    )
     for i in range(2, len(fnames)+1):
-        x_input = fnames[:i]
+        x_input = L(fnames[:i])
         val_dataset = x_input[-1][0].parent.name
+        print(val_dataset)
         pm.execute_notebook(input_path=f'{Path(nbs_folder)}/_motion_classification_time_series.ipynb',
-                            output_path='--',
+                            output_path='./__.ipynb',
                             parameters=dict(
                                 use_wandb=True,
                                 wandb_group='x_next_epsilon',
-                                #fnames=x_input,
-                                val_dataset = val_dataset
+                                val_dataset = val_dataset,
+                                fnames_poinc_map=list(x_input.itemgot(0).map(str)),
+                                fnames_index=list(x_input.itemgot(1).map(str))
                             ))

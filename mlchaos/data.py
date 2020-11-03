@@ -12,7 +12,8 @@ from .utils import df_slicer
 import seaborn as sns
 
 # Cell
-def load_poincare_maps(fname):
+@with_cast
+def load_poincare_maps(fname:Path):
     "Load the data from a Poincare map.\
     Returns a numpy array with a shape (n_orbits, 2, sequence_length). \
     The time column is removed from the data, since it is always multiples of 2*pi"
@@ -23,7 +24,8 @@ def load_poincare_maps(fname):
     return nparr.transpose([0, 2, 1])
 
 # Cell
-def load_index_file(fname, index_col=7, uncertainty_index=-1.):
+@with_cast
+def load_index_file(fname:Path, index_col=7, uncertainty_index=-1.):
     "Returns the index of an index file. In case the argument `index_col` has more \
     than one value, the value in `uncertainty_index` will be set."
     indices = pd.read_table(fname,
@@ -38,7 +40,8 @@ def load_index_file(fname, index_col=7, uncertainty_index=-1.):
 
 # Cell
 @delegates(to=load_index_file, but=['fname'])
-def load_poincare_index_pair(fname_poincare, fname_index, **kwargs):
+@with_cast
+def load_poincare_index_pair(fname_poincare:Path, fname_index:Path, **kwargs):
     "Load the x data from a Poincare file and the y data from the index file.\
     Returns a tuple of 2 numpy arrays: "
     "x : array with a shape (n_samples, n_channels, sequence_length)"
@@ -59,8 +62,9 @@ class TSDataChaos(TSData):
         self.fnames = []
         self.ds = []
         xs,ys, dss = [],[],[]
-        if isinstance(fnames, list):
+        if isinstance(fnames, L) or isinstance(fnames, list):
             for i, (fn_poincare, fn_index) in enumerate(fnames):
+                fn_poincare, fn_index = Path(fn_poincare), Path(fn_index)
                 dsname = fn_poincare.parent.name
                 x, y = load_poincare_index_pair(fn_poincare, fn_index, **kwargs)
                 xs.append(x)
@@ -72,12 +76,12 @@ class TSDataChaos(TSData):
             self.y = np.concatenate(ys)
             self.ds = np.concatenate(dss).squeeze()
         else:
-            fn_poincare, fn_index = fnames
+            fn_poincare, fn_index = Path(fnames[0]), Path(fnames[1])
             dsname = fn_poincare.parent.name
             self.fnames.append(fnames)
             self.dsname.append(dsname)
             self.x, self.y = load_poincare_index_pair(fn_poincare, fn_index, **kwargs)
-            self.ds = np.repeat(0, len(y))
+            self.ds = np.repeat(0, len(self.y))
         return self
 
     @classmethod

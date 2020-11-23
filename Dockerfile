@@ -13,18 +13,22 @@ RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID $USER
 ###
 
 # PyPi
-RUN pip install --upgrade nbdev fastai seaborn papermill plotly
-RUn pip install --upgrade wandb
+RUN pip install --upgrade nbdev seaborn papermill plotly wandb
 
 # Git
-#RUN pip install git+https://github.com/fastai/fastai2.git
-RUN pip install git+https://github.com/muellerzr/fastinference.git
+ENV LANG C.UTF-8
+RUN pip install git+https://github.com/fastai/fastai \ 
+                git+https://github.com/muellerzr/fastinference.git
 
 # Editable packages
 RUN mkdir /home/$USER/lib
 RUN cd /home/$USER/lib \
     && git clone https://github.com/vrodriguezf/timeseries.git \
     && cd timeseries \ 
+    && pip install -e .
+RUN cd /home/$USER/lib \
+    && git clone https://github.com/timeseriesAI/tsai.git \
+    && cd tsai \ 
     && pip install -e .
 
 # Environmental variables for wandb

@@ -12,7 +12,6 @@ from .utils import df_slicer
 import seaborn as sns
 
 # Cell
-@with_cast
 def load_poincare_maps(fname:Path):
     "Load the data from a Poincare map.\
     Returns a numpy array with a shape (n_orbits, 2, sequence_length). \
@@ -24,7 +23,6 @@ def load_poincare_maps(fname:Path):
     return nparr.transpose([0, 2, 1])
 
 # Cell
-@with_cast
 def load_index_file(fname:Path, index_col=7, uncertainty_index=-1.):
     "Returns the index of an index file. In case the argument `index_col` has more \
     than one value, the value in `uncertainty_index` will be set."
@@ -40,7 +38,6 @@ def load_index_file(fname:Path, index_col=7, uncertainty_index=-1.):
 
 # Cell
 @delegates(to=load_index_file, but=['fname'])
-@with_cast
 def load_poincare_index_pair(fname_poincare:Path, fname_index:Path, **kwargs):
     "Load the x data from a Poincare file and the y data from the index file.\
     Returns a tuple of 2 numpy arrays: "

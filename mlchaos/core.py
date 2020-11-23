@@ -41,7 +41,7 @@ class StandardizeNoDecode(Standardize):
 def plot_top_losses(x:TensorTS, y:TensorCategory, samples, outs, raws, losses, nrows=None, ncols=None, figsize=None, **kwargs):
     axs = get_grid(len(samples), nrows=nrows,
                    ncols=ncols, add_vert=1,
-                   figsize=figsize, title='Prediction/Actual/Loss/Probability', **kwargs)
+                   figsize=figsize, title='Prediction/Actual/Loss/Probability')
     for ax,s,o,r,l in zip(axs, samples, outs, raws, losses):
         s[0].show(ctx=ax, **kwargs)
         ax.set_title(f'{o[0]}/{s[1]} / {l.item():.2f} / {r.max().item():.2f}')
@@ -111,7 +111,7 @@ def MotionBlock():
 def plot_top_losses(x:TensorMotion, y:TensorCategory, samples, outs, raws, losses, nrows=None, ncols=None, figsize=None, **kwargs):
     axs = get_grid(len(samples), nrows=nrows,
                    ncols=ncols, add_vert=1,
-                   figsize=figsize, title='Predaction/Actual/Loss/Probability', **kwargs)
+                   figsize=figsize, title='Prediction/Actual/Loss/Probability')
     for ax,s,o,r,l in zip(axs, samples, outs, raws, losses):
         s[0].show(ctx=ax, **kwargs)
         ax.set_title(f'{o[0]}/{s[1]} / {l.item():.2f} / {r.max().item():.2f}')

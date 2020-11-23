@@ -41,7 +41,7 @@ class ClassificationInterpretationAugmented(ClassificationInterpretation):
             # The indices in loss_subset are relative to the object `idxs`. We have to
             # return the aboluste idxs with respect to the `self` object.
             # TODO: It's returning a pair instead of a topk object
-            return (loss_subset.values, idxs[loss_subset.indices])
+            return (loss_subset[0], idxs[loss_subset[1]])
 
 
     def plot_top_losses(self, k, largest=True, predicted=None,

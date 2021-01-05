@@ -23,16 +23,17 @@ def load_poincare_maps(fname:Path):
     return nparr.transpose([0, 2, 1])
 
 # Cell
-def load_index_file(fname:Path, index_col=7, uncertainty_index=-1.):
+def load_index_file(fname:Path, index_col=7, allow_multiple=True, uncertainty_index=-1.):
     "Returns the index of an index file. In case the argument `index_col` has more \
-    than one value, the value in `uncertainty_index` will be set."
+    than one value (i.e., it's a list) and allow_multiple is False, the value in `uncertainty_index` will be set \
+    for that row of the file."
     indices = pd.read_table(fname,
                          sep='\s+',
                          header=None,
                          usecols=L(index_col),
                          squeeze=True).values
     # indices is a numpy array
-    if len(indices.shape) > 1:
+    if len(indices.shape) > 1 and not allow_multiple:
         indices = array([x[0] if np.all(x == x[0]) else uncertainty_index for x in indices])
     return indices
 
@@ -40,11 +41,19 @@ def load_index_file(fname:Path, index_col=7, uncertainty_index=-1.):
 @delegates(to=load_index_file, but=['fname'])
 def load_poincare_index_pair(fname_poincare:Path, fname_index:Path, **kwargs):
     "Load the x data from a Poincare file and the y data from the index file.\
+    If multiple indices are used form the indices file, each sample of the poincare file \
+    is replicated once for every possible index associated to every motion. \
     Returns a tuple of 2 numpy arrays: "
     "x : array with a shape (n_samples, n_channels, sequence_length)"
     "y : array with a shape (n_samples)"
     "for the Poincare maps, n_channels is 2 (x and y)"
-    return load_poincare_maps(fname_poincare), load_index_file(fname_index, **kwargs)
+    x = load_poincare_maps(fname_poincare)
+    y = load_index_file(fname_index, **kwargs)
+    if y.ndim > 1:
+        # Replicate each sample for each index value and assign one index to each replica
+        x = x.repeat(y.shape[1], axis=0)
+        y = y.flatten()
+    return (x, y)
 
 # Cell
 class TSDataChaos(TSData):

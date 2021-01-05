@@ -21,7 +21,8 @@ index = {"show_cam_motion": "cam.ipynb",
          "x_sequence_length": "experiments.ipynb",
          "x_next_epsilon": "experiments.ipynb",
          "df_slicer": "utils.ipynb",
-         "ClassificationInterpretationAugmented": "utils.ipynb"}
+         "ClassificationInterpretationAugmented": "utils.ipynb",
+         "log_plt_as_wandb_img": "utils.ipynb"}
 
 modules = ["cam.py",
            "core.py",

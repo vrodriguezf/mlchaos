@@ -8,12 +8,16 @@ ARG USER=user
 RUN addgroup --gid $GROUP_ID $USER
 RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID $USER
 
+# Copy the default jupyterlab settings user settings to the new user folder
+RUN cp -r /.jupyter /home/$USER/.jupyter
+RUN chown -R $USER_ID:$GROUP_ID /home/$USER/.jupyter
+
 ###
 # Python packages
 ###
 
 # PyPi
-RUN pip install --upgrade nbdev seaborn papermill plotly wandb
+RUN pip install --upgrade nbdev seaborn papermill plotly wandb papersweep
 
 # Git
 ENV LANG C.UTF-8

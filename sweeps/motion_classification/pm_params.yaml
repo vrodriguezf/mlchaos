@@ -1,0 +1,2 @@
+use_wandb: True
+wandb_group: x_labelling_method

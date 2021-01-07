@@ -22,7 +22,8 @@ RUN pip install --upgrade nbdev seaborn papermill plotly wandb papersweep
 # Git
 ENV LANG C.UTF-8
 RUN pip install git+https://github.com/fastai/fastai \ 
-                git+https://github.com/muellerzr/fastinference.git
+                git+https://github.com/muellerzr/fastinference.git \
+                git+https://github.com/vrodriguezf/papersweep.git
 
 # Editable packages
 RUN mkdir /home/$USER/lib

@@ -3,13 +3,14 @@
 __all__ = ['df_slicer', 'ClassificationInterpretationAugmented', 'log_plt_as_wandb_img']
 
 # Cell
+from .imports import *
+from fastai.basics import *
 import numpy as np
 from fastcore.all import *
 from fastai.interpret import *
 from fastai.data.all import *
 import wandb
 import matplotlib.pyplot as plt
-import os
 
 # Cell
 def df_slicer(df, w, s=1, padding=False, padding_value=0, return_as='ndarray'):
@@ -29,9 +30,26 @@ def df_slicer(df, w, s=1, padding=False, padding_value=0, return_as='ndarray'):
     return np.rollaxis(np.dstack([x.values for x in with_padding]), -1)
 
 # Cell
+@patch
+def get_at(self:Interpretation, idxs):
+    if not is_listy(idxs): idxs = [idxs]
+    attrs = 'inputs,preds,targs,decoded,losses'
+    res = L([getattr(self, attr)[idxs] for attr in attrs.split(',')])
+    return res
+
+@patch
+def show_at(self:Interpretation, idx:int, **kwargs):
+    inp, _, targ, dec, _ = self.get_at(idx)
+    dec, targ = L(dec, targ).map(Self.unsqueeze(0))
+    self.dl.show_results((inp, dec), targ, **kwargs)
+
+# Cell
 class ClassificationInterpretationAugmented(ClassificationInterpretation):
     def top_losses(self, k=None, largest=True, predicted=None, actual=None):
-        "`k` largest(/smallest) losses and indexes, defaulting to all losses (sorted by `largest`)."
+        r"""
+        `k` largest(/smallest) losses and indexes, defaulting to all losses (sorted by `largest`)."
+        `predicted` and `actual` arguments are passed as decoded labels
+        """
         if predicted is None and actual is None:
             # Default behaviour
             return self.losses.topk(ifnone(k, len(self.losses)), largest=largest)
@@ -59,6 +77,15 @@ class ClassificationInterpretationAugmented(ClassificationInterpretation):
         x1,y1,outs = self.dl._pre_show_batch(b_out, max_n=k)
         if its is not None:
             plot_top_losses(x, y, its, outs.itemgot(slice(len(inps), None)), self.preds[idx], losses,  **kwargs)
+
+    def get_error_idxs(self):
+        r"""
+        Get the indices (relative to the validation set) of the items wrongly
+        classified by the learner, regardless the type of error.
+        """
+        mc = self.most_confused()
+        error_idxs = [self.top_losses(predicted=x[1], actual=x[0])[1].numpy() for x in mc]
+        return np.concatenate(error_idxs).squeeze()
 
 # Cell
 def log_plt_as_wandb_img(plt_title):

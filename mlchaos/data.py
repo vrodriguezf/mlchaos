@@ -4,6 +4,7 @@ __all__ = ['load_poincare_maps', 'load_index_file', 'load_poincare_index_pair', 
            'show_labelled_ic_map']
 
 # Cell
+from .imports import *
 from fastcore.all import *
 from timeseries.all import *
 import pandas as pd
@@ -112,6 +113,13 @@ class TSDataChaos(TSData):
             self.dsname.append(fn_poincare.parent.name)
             self.x = load_poincare_maps(fn_poincare)
         return self
+
+# Cell
+@patch
+def remove_uncertainty(self:TSDataChaos, uncertainty_index=-1):
+    self.x = self.x[self.y != uncertainty_index]
+    self.ds = self.ds[self.y != uncertainty_index]
+    self.y = self.y[self.y != uncertainty_index]
 
 # Cell
 def get_motion_items(fnames):

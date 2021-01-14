@@ -4,10 +4,12 @@ __all__ = ['StandardizeGlobal', 'StandardizeItem', 'StandardizeNoDecode', 'Tenso
            'MotionBlock', 'TensorTSMotion', 'ToTensorTSMotion', 'prettify_plot_TensorTSMotion']
 
 # Cell
+from .imports import *
 from timeseries.all import *
 from fastai.basics import *
 from fastai.vision.data import get_grid
 import numpy as np
+import matplotlib.cm as cm
 
 # Cell
 class StandardizeGlobal(ItemTransform):
@@ -49,8 +51,18 @@ def plot_top_losses(x:TensorTS, y:TensorCategory, samples, outs, raws, losses, n
 # Cell
 class TensorMotion(TensorTS):
     def show(self, ctx=None, title=None, label=None, chs=None,
-             leg=True, ylim=None, return_fig=False, mode=None, **kwargs):
-        "Show method with different modes"
+             leg=True, ylim=None, return_fig=False, mode=None,
+             am=None, cmap='inferno', **kwargs):
+        r"""
+        Show method with different modes. Important arguments:
+            * mode: They way the motion will show itself:
+                - None: Poincare map
+                - ts: Time series plot with all the channels (x,y) in the same
+                axis
+                - stacked: x and y will be shown in different canvas
+            * am: attribution map. Colour each point of the motion based on the
+            attribution marked by this map. Valid only for Poincare maps (mode = None).
+        """
         if mode=='ts':
             return TensorTS.show(self, ctx, title, chs, leg, **kwargs)
             if return_fig: print('Figures cannot be returned in mode ts')
@@ -58,23 +70,44 @@ class TensorMotion(TensorTS):
             ret = self.show_stacked(ctx, title, label, chs, leg, **kwargs)
             if return_fig: return ret
         else:
-            ret = self.show_poincmap(ctx, title, label, leg, ylim, return_fig, **kwargs)
+            ret = self.show_poincmap(ctx, title, label, leg, ylim, return_fig,
+                                     am=am, **kwargs)
             if return_fig: return ret
 
     def show_poincmap(self, ctx=None, title=None, label=None, leg=True,
-                      ylim=None, return_fig=False, **kwargs):
+                      ylim=None, return_fig=False, am=None, cmap='inferno',
+                      **kwargs):
         "Display poincare map for a motion"
         if ctx is None: fig, ctx = plt.subplots()
-        t = range(self.shape[1])
-        ctx.scatter(self[0][1:], self[1][1:])
-        # The initial conditions (x0, y0) are plotted in a different colour
-        ctx.scatter(self[0][0], self[1][0])
+        else: fig = None
+        if am is None:
+            ctx.scatter(self[0][1:], self[1][1:])
+            # The initial conditions (x0, y0) are plotted in a different colour
+            ctx.scatter(self[0][0], self[1][0])
+        else:
+            # the colours of the points will be given by the attribution map
+            assert am.ndim <= 2 and (am.shape[-1] == self.shape[-1]), \
+            f'Wrong dimensions in attribution_map. {am.shape}, {self.shape}'
+            am = (am - am.min())/(am.max() - am.min())
+            if am.ndim == 2:
+                am = am[0]
+            ctx.scatter(self[0], self[1], c=am, cmap=cmap)
+            if leg and fig is not None:
+                #display the colorbar
+                scalarmappaple = cm.ScalarMappable(cmap=cmap)
+                scalarmappaple.set_array(am)
+                cax = fig.add_axes([ctx.get_position().x1+0.01,
+                                    ctx.get_position().y0,
+                                    0.02,
+                                    ctx.get_position().height])
+                plt.colorbar(scalarmappaple, cax=cax)
         ctx.set(xlim=[0, 360])
         if ylim: ctx.set(ylim=ylim)
         if title: ctx.set_title(title)
         if return_fig: return fig
 
-    def show_stacked(self, ctx=None, title=None, label=None, chs=None, leg=True, color=None, **kwargs):
+    def show_stacked(self, ctx=None, title=None, label=None, chs=None, leg=True,
+                     color=None, **kwargs):
         "Display timeseries plots for a motion"
         t = range(self.shape[1])
         if ctx is None:
@@ -105,6 +138,43 @@ class ToTensorMotion(ItemTransform):
 def MotionBlock():
     "`TransformBlock` for orbit motions. Transform np array to TensorMotion type"
     return TransformBlock(type_tfms=[ToTensorTS(), ToTensorMotion()])
+
+# Cell
+@typedispatch
+def show_results(x:TensorMotion, y, samples, outs, ctxs=None, max_n=9, nrows=None,
+                 ncols=None, mode=None, amaps=None, figsize=(15,6), **kwargs):
+    r"""
+        Show results for TensorMotion objects
+    """
+    outs = [detuplify(o) for o in outs]
+    if mode == 'stacked':
+        n = min(len(samples), max_n)
+        ncols = int(np.ceil(n/nrows))
+        nchannels = 2
+        if ctxs is None: fig, ctxs = plt.subplots(nchannels*nrows, ncols, figsize=figsize)
+        for b, o, i in zip(samples, outs, range(max_n)):
+            b[0].show(ctx=ctxs[0 + nchannels*int(i/ncols)][i%ncols], title=f'{o} / {b[1]}', label='x', chs=[0], color='C0')
+            b[0].show(ctx=ctxs[1 + nchannels*int(i/ncols)][i%ncols], label='y', chs=[1], color='C1')
+        prettify_plot_TensorTSMotion(ctxs, n, nchannels, nrows, ncols)
+        fig.tight_layout()
+    elif mode == 'ts':
+        raise Exception('mode == ts not supported yet')
+    else:
+        # Default mode - Poincare map
+        if ctxs is None: ctxs = get_grid(min(len(samples), max_n), nrows=nrows,
+                                 ncols=ncols, add_vert=1, figsize=figsize)
+        if amaps is None:
+            ctxs = [b[0].show(ctx=c, title=f'{o} / {b[1]}', figsize=figsize, **kwargs)
+                    for b,o,c,_ in zip(samples,outs,ctxs,range(max_n))]
+        else:
+            # Show activation maps
+            assert is_listy(amaps) and len(amaps) == len(samples), \
+            f'amaps must be a list with length {len(samples)}'
+            ctxs = [b[0].show(ctx=c, title=f'{o} / {b[1]}', figsize=figsize,
+                              mode=mode, am=amap, **kwargs)
+                    for b,o,amap,c,_ in zip(samples,outs,amaps,ctxs,range(max_n))]
+
+    return ctxs
 
 # Cell
 @typedispatch

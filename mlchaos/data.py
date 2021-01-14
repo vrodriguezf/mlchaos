@@ -24,18 +24,29 @@ def load_poincare_maps(fname:Path):
     return nparr.transpose([0, 2, 1])
 
 # Cell
-def load_index_file(fname:Path, index_col=7, allow_multiple=True, uncertainty_index=-1.):
-    "Returns the index of an index file. In case the argument `index_col` has more \
-    than one value (i.e., it's a list) and allow_multiple is False, the value in `uncertainty_index` will be set \
-    for that row of the file."
+def load_index_file(fname:Path, index_col=7, multiindex_handler=None, uncertainty_index=-1.):
+    r"""
+    Returns the index of an index file. In case the argument `index_col` has
+    more than one value (i.e., it's a list), the argument `multiindex_handler`
+    will indicate what to do. Possible values are:
+        * None: Do nothing
+        * 'uncertainty': Set the value `uncertainty_index` as index of that row
+        * 'random': Randomly sample one index from the multiple options.
+    """
     indices = pd.read_table(fname,
                          sep='\s+',
                          header=None,
                          usecols=L(index_col),
                          squeeze=True).values
     # indices is a numpy array
-    if len(indices.shape) > 1 and not allow_multiple:
-        indices = array([x[0] if np.all(x == x[0]) else uncertainty_index for x in indices])
+    if len(indices.shape) > 1:
+        if multiindex_handler == 'uncertainty':
+            indices = array([x[0] if np.all(x == x[0]) else uncertainty_index
+                             for x in indices])
+        elif multiindex_handler == 'random':
+            # Randomly choose one index for each row
+            idx_msk = np.random.choice(indices.shape[1], indices.shape[0])
+            indices = np.choose(idx_msk, indices.T)
     return indices
 
 # Cell

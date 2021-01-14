@@ -31,7 +31,8 @@ def df_slicer(df, w, s=1, padding=False, padding_value=0, return_as='ndarray'):
 
 # Cell
 @patch
-def get_at(self:Interpretation, idxs):
+def __getitem__(self:Interpretation, idxs):
+    "Get the inputs, preds, targets, decoded outputs, and losses at `idx`"
     if not is_listy(idxs): idxs = [idxs]
     attrs = 'inputs,preds,targs,decoded,losses'
     res = L([getattr(self, attr)[idxs] for attr in attrs.split(',')])
@@ -39,7 +40,7 @@ def get_at(self:Interpretation, idxs):
 
 @patch
 def show_at(self:Interpretation, idx:int, **kwargs):
-    inp, _, targ, dec, _ = self.get_at(idx)
+    inp, _, targ, dec, _ = self[idx]
     dec, targ = L(dec, targ).map(Self.unsqueeze(0))
     self.dl.show_results((inp, dec), targ, **kwargs)
 
@@ -68,9 +69,9 @@ class ClassificationInterpretationAugmented(ClassificationInterpretation):
     def plot_top_losses(self, k, largest=True, predicted=None,
                         actual=None, **kwargs):
         losses,idx = self.top_losses(k, largest, predicted, actual)
-        if not isinstance(self.inputs, tuple): self.inputs = (self.inputs,)
-        if isinstance(self.inputs[0], torch.Tensor): inps = tuple(o[idx] for o in self.inputs)
-        else: inps = self.dl.create_batch(self.dl.before_batch([tuple(o[i] for o in self.inputs) for i in idx]))
+        if not isinstance(self.inputs, tuple): tupled_inputs = (self.inputs,)
+        if isinstance(tupled_inputs[0], torch.Tensor): inps = tuple(o[idx] for o in tupled_inputs)
+        else: inps = self.dl.create_batch(self.dl.before_batch([tuple(o[i] for o in tupled_inputs) for i in idx]))
         b = inps + tuple(o[idx] for o in (self.targs if is_listy(self.targs) else (self.targs,)))
         x,y,its = self.dl._pre_show_batch(b, max_n=k)
         b_out = inps + tuple(o[idx] for o in (self.decoded if is_listy(self.decoded) else (self.decoded,)))

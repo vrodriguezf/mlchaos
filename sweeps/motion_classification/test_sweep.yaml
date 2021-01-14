@@ -1,4 +1,4 @@
-name: combined
+name: x_labelling_method_random
 method: grid
 parameters:
     val_ds:

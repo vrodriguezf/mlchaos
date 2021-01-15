@@ -24,6 +24,7 @@ index = {"show_cam_motion": "cam.ipynb",
          "df_slicer": "utils.ipynb",
          "Interpretation.__getitem__": "utils.ipynb",
          "Interpretation.show_at": "utils.ipynb",
+         "show_attribution_maps_at": "utils.ipynb",
          "ClassificationInterpretationAugmented": "utils.ipynb",
          "log_plt_as_wandb_img": "utils.ipynb"}
 

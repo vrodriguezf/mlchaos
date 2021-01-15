@@ -52,7 +52,7 @@ def plot_top_losses(x:TensorTS, y:TensorCategory, samples, outs, raws, losses, n
 class TensorMotion(TensorTS):
     def show(self, ctx=None, title=None, label=None, chs=None,
              leg=True, ylim=None, return_fig=False, mode=None,
-             am=None, cmap='inferno', **kwargs):
+             am=None, cmap='inferno', fig=None, **kwargs):
         r"""
         Show method with different modes. Important arguments:
             * mode: They way the motion will show itself:
@@ -71,15 +71,14 @@ class TensorMotion(TensorTS):
             if return_fig: return ret
         else:
             ret = self.show_poincmap(ctx, title, label, leg, ylim, return_fig,
-                                     am=am, **kwargs)
+                                     am=am, fig=fig, **kwargs)
             if return_fig: return ret
 
     def show_poincmap(self, ctx=None, title=None, label=None, leg=True,
                       ylim=None, return_fig=False, am=None, cmap='inferno',
-                      **kwargs):
+                      fig=None, **kwargs):
         "Display poincare map for a motion"
         if ctx is None: fig, ctx = plt.subplots()
-        else: fig = None
         if am is None:
             ctx.scatter(self[0][1:], self[1][1:])
             # The initial conditions (x0, y0) are plotted in a different colour
@@ -142,7 +141,8 @@ def MotionBlock():
 # Cell
 @typedispatch
 def show_results(x:TensorMotion, y, samples, outs, ctxs=None, max_n=9, nrows=None,
-                 ncols=None, mode=None, amaps=None, figsize=(15,6), **kwargs):
+                 ncols=None, mode=None, amaps=None, figsize=(15,6), cmap='inferno',
+                 **kwargs):
     r"""
         Show results for TensorMotion objects
     """
@@ -161,18 +161,32 @@ def show_results(x:TensorMotion, y, samples, outs, ctxs=None, max_n=9, nrows=Non
         raise Exception('mode == ts not supported yet')
     else:
         # Default mode - Poincare map
-        if ctxs is None: ctxs = get_grid(min(len(samples), max_n), nrows=nrows,
-                                 ncols=ncols, add_vert=1, figsize=figsize)
+        if ctxs is None: fig, ctxs = get_grid(min(len(samples), max_n), nrows=nrows,
+                                              ncols=ncols, add_vert=1, figsize=figsize,
+                                              return_fig=True)
+        else:
+            raise Exception('Plotting amaps with a graphic context is not allowed')
         if amaps is None:
-            ctxs = [b[0].show(ctx=c, title=f'{o} / {b[1]}', figsize=figsize, **kwargs)
+            ctxs = [b[0].show(ctx=c, title=f'{o} / {b[1]}', figsize=figsize,
+                              cmap=cmap,**kwargs)
                     for b,o,c,_ in zip(samples,outs,ctxs,range(max_n))]
         else:
             # Show activation maps
             assert is_listy(amaps) and len(amaps) == len(samples), \
             f'amaps must be a list with length {len(samples)}'
+            # Add the color bar, need a fig object
+            scalarmappaple = cm.ScalarMappable(cmap=cmap)
+            # TODO: This is set with the values of just one plot
+            scalarmappaple.set_array(amaps[0])
+            print(ctxs[0].__class__)
+            bar_x = max([ctx.get_position().x1 for ctx in ctxs])
+            bar_y = min([ctx.get_position().y0 for ctx in ctxs])
+            cax = fig.add_axes([bar_x+0.01,bar_y, 0.02, ctxs[0].get_position().height])
+            plt.colorbar(scalarmappaple, cax=cax)
             ctxs = [b[0].show(ctx=c, title=f'{o} / {b[1]}', figsize=figsize,
-                              mode=mode, am=amap, **kwargs)
+                              mode=mode, am=amap, cmap=cmap, **kwargs)
                     for b,o,amap,c,_ in zip(samples,outs,amaps,ctxs,range(max_n))]
+
 
     return ctxs
 

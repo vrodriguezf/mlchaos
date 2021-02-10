@@ -177,10 +177,11 @@ def show_results(x:TensorMotion, y, samples, outs, ctxs=None, max_n=9, nrows=Non
             # Add the color bar, need a fig object
             scalarmappaple = cm.ScalarMappable(cmap=cmap)
             # TODO: This is set with the values of just one plot
-            scalarmappaple.set_array(amaps[0])
-            print(ctxs[0].__class__)
+            scalarmappaple.set_array(torch.stack(amaps))
             bar_x = max([ctx.get_position().x1 for ctx in ctxs])
-            bar_y = min([ctx.get_position().y0 for ctx in ctxs])
+            #bar_y = min([ctx.get_position().y0 for ctx in ctxs])
+            bar_y = (fig.get_size_inches()[1]/2 - ctxs[0].get_position().height)/\
+                    (fig.get_size_inches()[1])
             cax = fig.add_axes([bar_x+0.01,bar_y, 0.02, ctxs[0].get_position().height])
             plt.colorbar(scalarmappaple, cax=cax)
             ctxs = [b[0].show(ctx=c, title=f'{o} / {b[1]}', figsize=figsize,

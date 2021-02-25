@@ -1,4 +1,5 @@
 #Victor - jupyterlab
+.env
 .npm
 .jupyter
 .ipython

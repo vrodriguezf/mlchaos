@@ -28,3 +28,6 @@ ai-fast-track takes 100 milliseconds.
 cam.py: 498:             plt.scatter(t, tseries, cmap=cmap, c = acts)
 
 Replace tseries by tseries[ch], where ch is the channel of interest
+
+25/02/21
+Update docker-compose to 1.28

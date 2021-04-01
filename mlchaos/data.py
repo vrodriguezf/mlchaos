@@ -10,7 +10,7 @@ from timeseries.all import *
 import pandas as pd
 import numpy as np
 from .utils import df_slicer
-import seaborn as sns
+from plotnine import *
 
 # Cell
 def load_poincare_maps(fname:Path):
@@ -142,13 +142,39 @@ def get_motion_items(fnames):
     return data.get_items()
 
 # Cell
-@delegates(sns.scatterplot, but=['data', 'x', 'y', 'hue', 'marker'])
-def show_labelled_ic_map(poinc_maps:Union[torch.Tensor, np.ndarray]=None,
-                         lbls:list=None, **kwargs):
-    "Show a scatter plot with the initial conditions (x0, y0) of each Poincare map in \
-    `poinc_maps`, coloured with the labels given in `lbls`.'. The argument `poinc_maps` \
-    expects a (n_items, n_channels, n_points) numpy array or tensor"
-    initial_conditions = poinc_maps[:,:,0]
-    qux = pd.DataFrame(initial_conditions, columns=['x0', 'y0'])
-    qux['class'] = lbls
-    return sns.scatterplot(data=qux, x='x0', y='y0', hue='class', marker='.', **kwargs)
+def show_labelled_ic_map(poinc_maps:Union[torch.Tensor, np.ndarray],
+                         preds:torch.Tensor, vocab:list=None, show_confidence=False,
+                         show_legend=False, color_values=None, **kwargs):
+    r"""
+    Show a scatter plot with the initial conditions (x0, y0) of each Poincare map in \
+    `poinc_maps`, coloured with the predictions given in `preds`.. The argument `poinc_maps` \
+    expects a (n_items, n_channels, n_points) numpy array or tensor. PRedictions can
+    be given as a rank-2 tensor, with the output probabilities for each class, or as a
+    rank-1 tensor, with the index of the predicted class. If `show_confidence` is true,
+    it will contain the probability distribution of each prediction, which will be
+    used to plot each point in the map with higher or level transparency (predictions with
+    higher probability will have greater values of transparency)
+    """
+    ic = poinc_maps[:,:,0]
+    data = pd.DataFrame(ic, columns=['x0', 'y0'])
+
+    lbls = torch.argmax(preds, dim=1)
+    data['lbl'] = L(lbls, use_list=True).map(lambda o: vocab[o]) if vocab else L(lbls, use_list=True).map(str)
+    data['confidence'] = torch.max(preds, dim=1).values
+    scale_args = dict()
+    if not show_legend: scale_args['guide']=False
+    # Color values follow the same order of the vocab
+    scale_color_layer = scale_color_discrete(**scale_args) if not color_values else scale_color_manual(color_values, **scale_args)
+
+    res = (
+        ggplot(data, aes('x0', 'y0')) +
+        theme_classic()
+    )
+    if show_confidence:
+        res = (res + geom_point(aes('x0','y0', color='lbl', alpha='confidence'),
+                                shape='.') +
+        scale_color_layer + scale_alpha_continuous(**scale_args))
+    else:
+        res = (res + geom_point(aes('x0','y0', color='lbl'), shape='.') +
+               scale_color_layer)
+    return res

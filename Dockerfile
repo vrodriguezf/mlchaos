@@ -17,7 +17,7 @@ RUN chown -R $USER_ID:$GROUP_ID /home/$USER/.jupyter
 ###
 
 # PyPi
-RUN pip install --upgrade nbdev seaborn papermill plotly wandb papersweep
+RUN pip install --upgrade nbdev seaborn papermill plotly wandb papersweep plotnine
 
 # Git
 ENV LANG C.UTF-8

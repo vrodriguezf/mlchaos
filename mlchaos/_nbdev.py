@@ -24,7 +24,8 @@ index = {"show_cam_motion": "cam.ipynb",
          "Interpretation.show_at": "utils.ipynb",
          "show_attribution_maps_at": "utils.ipynb",
          "ClassificationInterpretationAugmented": "utils.ipynb",
-         "log_plt_as_wandb_img": "utils.ipynb"}
+         "log_last_plt_as_wandb_img": "utils.ipynb",
+         "log_plotnine_as_wandb_img": "utils.ipynb"}
 
 modules = ["cam.py",
            "core.py",

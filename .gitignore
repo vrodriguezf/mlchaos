@@ -9,6 +9,7 @@
 wandb
 nbs/--.ipynb
 __.ipynb
+rclone_local
 
 *.bak
 .gitattributes

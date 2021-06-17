@@ -63,7 +63,7 @@ class ClassificationInterpretationAugmented(ClassificationInterpretation):
             cond_preds = (self.decoded == self.vocab.o2i[predicted]) if predicted else tensor(True)
             cond_actuals = (self.targs == self.vocab.o2i[actual]) if actual else tensor(True)
             idxs = (cond_preds & cond_actuals).nonzero().squeeze()
-            idxs = [idxs] if not is_listy(idxs) else idxs
+            # idxs = [idxs] if not is_listy(idxs) else idxs
             loss_subset = self.losses[idxs].topk(ifnone(k, len(idxs)), largest=largest)
             # The indices in loss_subset are relative to the object `idxs`. We have to
             # return the aboluste idxs with respect to the `self` object.

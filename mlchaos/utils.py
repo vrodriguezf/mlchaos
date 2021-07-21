@@ -34,7 +34,7 @@ def df_slicer(df, w, s=1, padding=False, padding_value=0, return_as='ndarray'):
 @patch
 def __getitem__(self:Interpretation, idxs):
     "Get the inputs, preds, targets, decoded outputs, and losses at `idx`"
-    if not is_listy(idxs): idxs = [idxs]
+    if not is_listy(idxs) and not is_array(idxs): idxs = [idxs]
     attrs = 'inputs,preds,targs,decoded,losses'
     res = L([getattr(self, attr)[idxs] for attr in attrs.split(',')])
     return res

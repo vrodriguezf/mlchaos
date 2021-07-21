@@ -40,11 +40,6 @@ RUN cd /home/$USER/lib \
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-### Install Github command line (TODO: Move this to the parent image)
-RUN cd ~ \
-    && curl -L https://github.com/cli/cli/releases/download/v0.11.1/gh_0.11.1_linux_amd64.deb -o gh.deb \
-    && apt install ./gh.deb
-
 # Change the ownership of the editable installs within the lib folder
 RUN chown -R $USER:$USER /home/$USER/lib
 

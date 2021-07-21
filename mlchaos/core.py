@@ -192,6 +192,7 @@ def show_results(x:TensorMotion, y, samples, outs, ctxs=None, max_n=9, nrows=Non
     return ctxs
 
 # Cell
+TensorMotion.register_func(Tensor.__getitem__, TensorMotion, TensorCategory)
 @typedispatch
 def plot_top_losses(x:TensorMotion, y:TensorCategory, samples, outs, raws, losses, nrows=None, ncols=None, figsize=None, **kwargs):
     axs = get_grid(len(samples), nrows=nrows,

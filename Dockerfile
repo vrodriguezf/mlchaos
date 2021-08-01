@@ -18,6 +18,7 @@ RUN chown -R $USER_ID:$GROUP_ID /home/$USER/.jupyter
 
 # PyPi
 RUN pip install --upgrade nbdev seaborn papermill plotly wandb papersweep plotnine
+RUN pip3 install torch==1.9.0+cu111 torchvision==0.10.0+cu111 -f https://download.pytorch.org/whl/torch_stable.html
 
 # Git
 ENV LANG C.UTF-8
@@ -28,14 +29,14 @@ RUN pip install git+https://github.com/fastai/fastai \
 # Editable packages
 RUN mkdir /home/$USER/lib
 RUN cd /home/$USER/lib \
-    && git clone https://github.com/vrodriguezf/timeseries.git \
-    && cd timeseries \ 
-    && pip install -e .
-RUN cd /home/$USER/lib \
     && git clone https://github.com/timeseriesAI/tsai.git \
     && cd tsai \ 
     && pip install -e .
-
+RUN cd /home/$USER/lib \
+    && git clone https://github.com/vrodriguezf/timeseries.git \
+    && cd timeseries \ 
+    && pip install -e .
+    
 # Environmental variables for wandb
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8

@@ -23,6 +23,7 @@ import pandas as pd
 import numpy as np
 from .utils import df_slicer
 from plotnine import *
+from typing import Callable
 
 # Cell
 def load_poincare_maps(fname:Path):
@@ -183,6 +184,25 @@ def export(self:TSDataChaos, fname_poinc_map, fname_index):
             np.savetxt(f, line_placeholder[np.newaxis])
 
 # Cell
+@patch
+def reduce(self:TSDataChaos, cond:Optional[Callable]=None, reduction_factor:int=1):
+    """
+        Args:
+        =====
+
+        `cond`: Optional callable that takes a `TSDataChaos` objects as input and
+        returns a list of indices, or a boolean mask, indiciating the elements
+        that fullfil a given condition
+        `reduction_factor: If it is equals to n>1, every 1 out of n points will be
+        kept. It is applied after applying `cond`.
+    """
+    idxs = cond(self) if cond is not None else np.arange(self.get_nb_samples())
+    res = TSDataChaos.from_xy(x = self.x[idxs][::reduction_factor],
+                        y = self.y[idxs][::reduction_factor],
+                        index_col=self.index_col)
+    return res
+
+# Cell
 def get_motion_items(fnames):
     "get_ts_items return list of tuples. Each tuple corresponds \
     to a timeserie (nump.ndarray) and a label (string). fnames is not \
@@ -193,8 +213,9 @@ def get_motion_items(fnames):
 
 # Cell
 def show_labelled_ic_map(poinc_maps:Union[torch.Tensor, np.ndarray],
-                         preds:Union[torch.Tensor, np.ndarray], vocab:list=None, show_confidence=False,
-                         show_legend=False, color_values=None, **kwargs):
+                         preds:Union[torch.Tensor, np.ndarray], vocab:list=None,
+                         show_confidence=False, show_legend=False, color_values=None,
+                         ylim=None, **kwargs):
     r"""
     Show a scatter plot with the initial conditions (x0, y0) of each Poincare map in \
     `poinc_maps`, coloured with the predictions given in `preds`.. The argument `poinc_maps` \
@@ -205,24 +226,28 @@ def show_labelled_ic_map(poinc_maps:Union[torch.Tensor, np.ndarray],
     used to plot each point in the map with higher or level transparency (predictions with
     higher probability will have greater values of transparency)
     """
+    ylim = ifnone(ylim, [poinc_maps[:, 1].min(), poinc_maps[:, 1].max()])
     ic = poinc_maps[:,:,0]
     data = pd.DataFrame(ic, columns=['x0', 'y0'])
     if isinstance(preds, np.ndarray): preds = tensor(preds)
     if preds.ndim == 1: preds = F.one_hot(preds)
     lbls = torch.argmax(preds, dim=1)
-    data['lbl'] = L(lbls, use_list=True).map(lambda o: vocab[o]) if vocab else L(lbls, use_list=True).map(str)
+    data['lbl'] = L(lbls, use_list=True).map(
+        lambda o: vocab[o]) if vocab else L(lbls, use_list=True).map(str)
     data['confidence'] = torch.max(preds, dim=1).values
     scale_args = dict()
     if not show_legend: scale_args['guide']=False
     # Color values follow the same order of the vocab
-    scale_color_layer = scale_color_discrete(**scale_args) if not color_values else scale_color_manual(color_values, **scale_args)
+    scale_color_layer = scale_color_discrete(**scale_args) if not color_values else \
+    scale_color_manual(color_values, **scale_args)
 
     res = (
         ggplot(data, aes('x0', 'y0')) +
-        theme_classic()
+        theme_classic() +
+        scale_y_continuous(limits=ylim)
     )
     if show_confidence:
-        res = (res + geom_point(aes('x0','y0', color='lbl', alpha='confidence'),
+        res = (res + geom_point(aes('x0','y0', color='factor(lbl)', alpha='confidence'),
                                 shape='.') +
         scale_color_layer + scale_alpha_continuous(**scale_args))
     else:

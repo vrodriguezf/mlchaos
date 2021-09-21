@@ -15,6 +15,7 @@ services:
     environment:
       - WANDB_API_KEY=${WANDB_API_KEY} #*
       - CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}
+      - GH_TOKEN=${GH_TOKEN} #*
     volumes:
       - ./:/home/${USER_NAME}/work #*
       - ${LOCAL_DATA_PATH}:/home/${USER_NAME}/data/ #*

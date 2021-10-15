@@ -1,5 +1,0 @@
-use_wandb: True
-a: ['fli', 'freq_ana']
-b:
-    - 4
-    - 6

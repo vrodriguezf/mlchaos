@@ -38,3 +38,5 @@ then go to `localhost:{{JUPYTER_PORT}}` to run the notebooks under the `nbs` fol
 
 > Note: This is meant to be deployed in a system with at least one GPU. If your system does not have any, you'll have to change the previous ``docker-compose`` command to: ``docker-compose -f docker-compose-cpu.yml up -d --build``
 
+Finally, to get the access token for JupyterLab, execute `docker-compose logs jupyter` and copy-paste the token that will be prompted as part of the container logs.
+

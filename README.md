@@ -40,3 +40,6 @@ then go to `localhost:{{JUPYTER_PORT}}` to run the notebooks under the `nbs` fol
 
 Finally, to get the access token for JupyterLab, execute `docker-compose logs jupyter` and copy-paste the token that will be prompted as part of the container logs.
 
+## Cite
+
+TBA, paper accepted at Nature Scientific Reports

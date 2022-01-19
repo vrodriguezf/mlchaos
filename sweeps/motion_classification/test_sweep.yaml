@@ -1,6 +1,0 @@
-name: x_labelling_method_random
-method: grid
-parameters:
-    val_ds:
-        distribution: categorical
-        values: ["eps=0.025","eps=0.024","eps=0.023","eps=0.022","eps=0.021"]

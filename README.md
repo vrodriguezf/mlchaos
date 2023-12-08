@@ -40,6 +40,16 @@ then go to `localhost:{{JUPYTER_PORT}}` to run the notebooks under the `nbs` fol
 
 Finally, to get the access token for JupyterLab, execute `docker-compose logs jupyter` and copy-paste the token that will be prompted as part of the container logs.
 
+## Data
+
+Right now the code for the data generation is not published. Contact the authors for a direct access to the datasets used in the paper.
+
+## Usage
+
+There are two main notebooks used to run the experiments shown in the paper:
+- `nbs_experiments/motion_classification_time_series.ipynb`: This notebook goes through a dataset of motions described as time series, and trains a motion classifier.
+- `ǹbs_experiments/complete_cartography.ipynb`: This notebook runs the previous one and uses the result to complete a given cartography.
+
 ## Cite
 
 If you use this work in your research please use the following BibTeX entry:

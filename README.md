@@ -42,4 +42,26 @@ Finally, to get the access token for JupyterLab, execute `docker-compose logs ju
 
 ## Cite
 
-TBA, paper accepted at Nature Scientific Reports
+If you use this work in your research please use the following BibTeX entry:
+```
+@article{celletti_classification_2022,
+	title = {Classification of regular and chaotic motions in {Hamiltonian} systems with deep learning},
+	volume = {12},
+	copyright = {2022 The Author(s)},
+	issn = {2045-2322},
+	url = {https://www.nature.com/articles/s41598-022-05696-9},
+	doi = {10.1038/s41598-022-05696-9},
+	language = {en},
+	number = {1},
+	urldate = {2022-05-06},
+	journal = {Scientific Reports},
+	author = {Celletti, Alessandra and Gales, Catalin and Rodriguez-Fernandez, Victor and Vasile, Massimiliano},
+	month = feb,
+	year = {2022},
+	note = {Number: 1
+Publisher: Nature Publishing Group},
+	keywords = {Applied mathematics, Computational science},
+	pages = {1890},
+	file = {Full Text PDF:/home/victor/Zotero/storage/XI7G988A/Celletti et al. - 2022 - Classification of regular and chaotic motions in H.pdf:application/pdf;Snapshot:/home/victor/Zotero/storage/QH85H4HU/s41598-022-05696-9.html:text/html},
+}
+```

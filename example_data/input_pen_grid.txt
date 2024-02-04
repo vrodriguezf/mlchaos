@@ -1,0 +1,9 @@
+!              Please do not modify the number of lines of this file!!
+!****************************************************************************************
+!  Please insert the total time of integration 
+!  the step size of integration
+200000          ! total time of integration 
+0.001         ! step size of integration
+!****************************************************************************************
+!   Please insert the initial conditions
+0.02	!epsilon
